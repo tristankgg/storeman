@@ -135,6 +135,13 @@
             display: block;
         }
 
+        .status-message.warning {
+            background: #fff3e0;
+            color: #e65100;
+            border: 1px solid #ff9800;
+            display: block;
+        }
+
         .comments-section {
             margin-top: 40px;
         }
@@ -241,15 +248,22 @@
     </div>
 
     <script>
-        // Google Apps Script Web App URL - Replace this with your own
-        const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/d/YOUR_SCRIPT_ID/userweb?v=1';
+        const GOOGLE_APPS_SCRIPT_URL = 'YOUR_GOOGLE_APPS_SCRIPT_URL';
 
-        // Load comments on page load
-        document.addEventListener('DOMContentLoaded', loadComments);
+        document.addEventListener('DOMContentLoaded', () => {
+            if (GOOGLE_APPS_SCRIPT_URL === 'YOUR_GOOGLE_APPS_SCRIPT_URL') {
+                showStatus('⚙️ Please configure your Google Apps Script URL in the code', 'warning');
+            }
+            loadComments();
+        });
 
-        // Form submission
         document.getElementById('commentForm').addEventListener('submit', async (e) => {
             e.preventDefault();
+            
+            if (GOOGLE_APPS_SCRIPT_URL === 'YOUR_GOOGLE_APPS_SCRIPT_URL') {
+                showStatus('❌ Google Apps Script URL not configured yet', 'error');
+                return;
+            }
             
             const name = document.getElementById('name').value.trim();
             const location = document.getElementById('location').value.trim();
@@ -279,8 +293,6 @@
                     })
                 });
 
-                // Since we use no-cors, we can't check response status
-                // Assume success after a brief delay
                 setTimeout(() => {
                     showStatus('Comment added successfully! 🎉', 'success');
                     document.getElementById('commentForm').reset();
@@ -293,6 +305,7 @@
                 showStatus('Error submitting comment. Please try again.', 'error');
                 submitBtn.disabled = false;
                 submitBtn.textContent = 'Add Comment';
+                console.error('Submit error:', error);
             }
         });
 
@@ -315,7 +328,6 @@
                 displayComments(comments);
             } catch (error) {
                 console.error('Error loading comments:', error);
-                // Silently fail - show empty state
                 displayComments([]);
             }
         }
@@ -355,16 +367,20 @@
 
         function formatTime(timestamp) {
             if (!timestamp) return 'Just now';
-            const date = new Date(timestamp);
-            const now = new Date();
-            const diff = Math.floor((now - date) / 1000);
+            try {
+                const date = new Date(timestamp);
+                const now = new Date();
+                const diff = Math.floor((now - date) / 1000);
 
-            if (diff < 60) return 'Just now';
-            if (diff < 3600) return Math.floor(diff / 60) + 'm ago';
-            if (diff < 86400) return Math.floor(diff / 3600) + 'h ago';
-            if (diff < 604800) return Math.floor(diff / 86400) + 'd ago';
-            
-            return date.toLocaleDateString();
+                if (diff < 60) return 'Just now';
+                if (diff < 3600) return Math.floor(diff / 60) + 'm ago';
+                if (diff < 86400) return Math.floor(diff / 3600) + 'h ago';
+                if (diff < 604800) return Math.floor(diff / 86400) + 'd ago';
+                
+                return date.toLocaleDateString();
+            } catch (e) {
+                return timestamp;
+            }
         }
     </script>
 </body>
