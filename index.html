@@ -135,13 +135,6 @@
             display: block;
         }
 
-        .status-message.warning {
-            background: #fff3e0;
-            color: #e65100;
-            border: 1px solid #ff9800;
-            display: block;
-        }
-
         .comments-section {
             margin-top: 40px;
         }
@@ -248,22 +241,14 @@
     </div>
 
     <script>
-        const GOOGLE_APPS_SCRIPT_URL = 'YOUR_GOOGLE_APPS_SCRIPT_URL';
+        const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzIvf-93URK0_blEbQLJbDPGnAXt_pINGzcoCUfAtff8EdS6NxyyxAfPOOND72Jeb_6/exec';
 
         document.addEventListener('DOMContentLoaded', () => {
-            if (GOOGLE_APPS_SCRIPT_URL === 'YOUR_GOOGLE_APPS_SCRIPT_URL') {
-                showStatus('⚙️ Please configure your Google Apps Script URL in the code', 'warning');
-            }
             loadComments();
         });
 
         document.getElementById('commentForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            
-            if (GOOGLE_APPS_SCRIPT_URL === 'YOUR_GOOGLE_APPS_SCRIPT_URL') {
-                showStatus('❌ Google Apps Script URL not configured yet', 'error');
-                return;
-            }
             
             const name = document.getElementById('name').value.trim();
             const location = document.getElementById('location').value.trim();
